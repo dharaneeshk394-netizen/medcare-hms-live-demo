@@ -10,6 +10,7 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "db:init": "node backend/init_schema.cjs",
+    "demo:init": "node backend/init_demo_users.cjs",
     "db:seed": "node backend/restore_dump.cjs",
     "demo:reset": "node backend/restore_dump.cjs",
     "setup:check": "node backend/scripts/setup_check.cjs",
