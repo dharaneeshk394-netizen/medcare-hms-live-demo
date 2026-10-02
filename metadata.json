@@ -1,0 +1,8 @@
+{
+  "name": "Hospital Management System",
+  "description": "A comprehensive hospital management system for managing patients, doctors, appointments, departments, and admissions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

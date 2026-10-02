@@ -1,0 +1,51 @@
+{
+  "name": "hospital-management-system",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "lint": "oxlint",
+    "start": "node dist/server.cjs",
+    "preview": "vite preview",
+    "db:init": "node backend/restore_dump.cjs",
+    "db:seed": "node backend/restore_dump.cjs",
+    "demo:reset": "node backend/restore_dump.cjs",
+    "setup:check": "node backend/scripts/setup_check.cjs",
+    "test": "NODE_ENV=test TEST_DB_NAME=hospital_management_test node --test --test-concurrency=1 'backend/tests/**/*.test.js'"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "pg": "^8.23.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.19.0",
+    "@types/node": "^24.13.3",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@types/supertest": "^7.2.1",
+    "@vitejs/plugin-react": "^6.0.4",
+    "adm-zip": "^0.6.1",
+    "esbuild": "^0.28.2",
+    "oxlint": "^1.75.0",
+    "supertest": "^7.2.2",
+    "tsx": "^4.23.13",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.0"
+  }
+}
