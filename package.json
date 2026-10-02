@@ -9,7 +9,7 @@
     "lint": "oxlint",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
-    "db:init": "node backend/restore_dump.cjs",
+    "db:init": "node backend/init_schema.cjs",
     "db:seed": "node backend/restore_dump.cjs",
     "demo:reset": "node backend/restore_dump.cjs",
     "setup:check": "node backend/scripts/setup_check.cjs",
