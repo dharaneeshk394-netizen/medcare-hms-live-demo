@@ -120,7 +120,7 @@ function getSslConfig(targetHost, urlSslMode, isDatabaseUrl) {
     return { rejectUnauthorized: false };
   }
 
-  return { rejectUnauthorized: true };
+  return { rejectUnauthorized: false };
 }
 
 function buildPoolConfig() {
