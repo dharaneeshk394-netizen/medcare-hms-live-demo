@@ -41,7 +41,9 @@ async function getSummary() {
     pool.query("SELECT COUNT(*)::integer AS count FROM public.patients"),
     pool.query("SELECT COUNT(*)::integer AS count FROM public.doctors"),
     pool.query("SELECT COUNT(*)::integer AS count FROM public.appointments"),
-    pool.query("SELECT COUNT(*)::integer AS count, COALESCE(SUM(total_amount), 0)::numeric AS revenue, COALESCE(SUM(paid_amount), 0)::numeric AS collected, COALESCE(SUM(balance_amount), 0)::numeric AS balance FROM public.invoices"),
+    pool.query(
+      "SELECT COUNT(*)::integer AS count, COALESCE(SUM(total_amount), 0)::numeric AS revenue, COALESCE(SUM(paid_amount), 0)::numeric AS collected, COALESCE(SUM(balance_amount), 0)::numeric AS balance FROM public.invoices"
+    ),
     pool.query("SELECT COUNT(*)::integer AS count FROM public.lab_orders"),
     pool.query("SELECT COUNT(*)::integer AS count FROM public.prescriptions"),
     pool.query("SELECT COUNT(*)::integer AS count FROM public.admissions"),
@@ -183,31 +185,22 @@ async function getFinancialReport(startDate, endDate) {
   const invResult = await pool.query(invQuery, params);
 
   // Breakdown by item type in invoice_items
-  const itemWhere = conditions.length > 0 ? `WHERE i.${conditions.join(" AND i.")}` : "";
+  const itemWhere = conditions.length > 0 ? `WHERE ${conditions.map((c) => `i.${c}`).join(" AND ")}` : "";
   const itemQuery = `
     SELECT
-      ii.item_type AS "itemType",
+      COALESCE(ii.item_type, 'General') AS "itemType",
       COUNT(*)::integer AS "itemCount",
-      COALESCE(SUM(ii.subtotal), 0)::numeric AS "revenue"
+      COALESCE(SUM(ii.total_price), 0)::numeric AS "revenue"
     FROM public.invoice_items ii
     JOIN public.invoices i ON i.id = ii.invoice_id
     ${itemWhere}
-    GROUP BY ii.item_type
+    GROUP BY COALESCE(ii.item_type, 'General')
     ORDER BY revenue DESC
   `;
 
-  const itemResult = await pool.query(itemWhere ? itemQuery : `
-    SELECT
-      ii.item_type AS "itemType",
-      COUNT(*)::integer AS "itemCount",
-      COALESCE(SUM(ii.subtotal), 0)::numeric AS "revenue"
-    FROM public.invoice_items ii
-    JOIN public.invoices i ON i.id = ii.invoice_id
-    GROUP BY ii.item_type
-    ORDER BY revenue DESC
-  `, params);
+  const itemResult = await pool.query(itemQuery, params);
 
-  const summary = invResult.rows[0];
+  const summary = invResult.rows[0] || {};
 
   return {
     totalInvoices: parseInt(summary.totalInvoices, 10) || 0,
