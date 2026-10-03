@@ -5,6 +5,19 @@ import { getSettings } from "../services/settingsService";
 /**
  * Format ISO date string into readable localized date and time.
  */
+
+/**
+ * Normalize doctor name to ensure single "Dr." prefix without duplication.
+ */
+function formatDoctorName(name) {
+  if (!name || name === "—") return "Hospital Physician";
+  const trimmed = name.trim();
+  if (/^Dr\.?\s+/i.test(trimmed)) {
+    return trimmed;
+  }
+  return `Dr. ${trimmed}`;
+}
+
 function formatDateTime(dateString) {
   if (!dateString) return "—";
   const parsed = new Date(dateString);
@@ -84,7 +97,7 @@ export default function PrintableLabReport({ order, settings: initialSettings })
     .join(" • ") || "—";
 
   // Doctor & Referring Info
-  const doctorName = order.doctorName ? `Dr. ${order.doctorName}` : "Hospital Physician";
+  const doctorName = formatDoctorName(order.doctorName);
   const doctorSpecialization = order.doctorSpecialization || "General Medicine";
   const orderedByName = order.orderedByName || "Authorized Practitioner";
 

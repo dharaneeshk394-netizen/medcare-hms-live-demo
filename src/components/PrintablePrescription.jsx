@@ -17,9 +17,21 @@ function formatDate(dateString) {
 }
 
 /**
+ * Normalize doctor name to ensure single "Dr." prefix without duplication.
+ */
+function formatDoctorName(name) {
+  if (!name || name === "—") return "—";
+  const trimmed = name.trim();
+  if (/^Dr\.?\s+/i.test(trimmed)) {
+    return trimmed;
+  }
+  return `Dr. ${trimmed}`;
+}
+
+/**
  * PrintablePrescription Component
  *
- * Renders a standardized, professional A4 medical prescription document.
+ * Renders a standardized, professional single-page A4 medical prescription document.
  * Hidden on screen; activated via @media print when window.print() is called.
  */
 export default function PrintablePrescription({ prescription, settings: initialSettings }) {
@@ -87,14 +99,15 @@ export default function PrintablePrescription({ prescription, settings: initialS
     .filter(Boolean)
     .join(" • ");
 
-  const doctorName = prescription.doctorName || "—";
+  const rawDoctorName = prescription.doctorName || prescription.doctor_name || "Medical Practitioner";
+  const doctorDisplayName = formatDoctorName(rawDoctorName);
   const doctorSpecialization =
     prescription.doctorSpecialization || prescription.specialization || "General Medicine";
   const doctorCode =
     prescription.doctorCode ||
     (prescription.doctorId ? `DOC-${prescription.doctorId}` : "—");
   const doctorPhone = prescription.doctorPhone || "—";
-  const _doctorEmail = prescription.doctorEmail || "—";
+
   const departmentName =
     prescription.department ||
     prescription.doctorDepartment ||
@@ -111,35 +124,37 @@ export default function PrintablePrescription({ prescription, settings: initialS
   const diagnosisNotes =
     prescription.diagnosisNotes ||
     prescription.diagnosis_notes ||
-    "Routine clinical evaluation. Medication prescribed per outpatient clinical examination.";
+    prescription.diagnosis ||
+    "Clinical evaluation completed. Prescribed standard therapeutic dosage regimen.";
 
   const status = (prescription.status || "ACTIVE").toUpperCase();
 
   return (
-    <div
-      className="prescription-print-document"
-      id="printable-prescription-document"
-      aria-label={`Printable prescription document ${rxNumber}`}
-    >
-      {/* 1. HOSPITAL FACILITY HEADER */}
+    <div className="prescription-print-document" aria-hidden="true">
+      {/* 1. OFFICIAL HOSPITAL LETTERHEAD & RX META */}
       <header className="print-rx-header">
         <div className="print-rx-brand">
-          <div className="print-rx-logo">
-            {logoUrl ? (
-              <img src={logoUrl} alt={hospitalName} style={{ maxHeight: "40px", maxWidth: "60px", objectFit: "contain" }} />
-            ) : (
-              <span className="print-rx-logo-icon" aria-hidden="true">+</span>
-            )}
-          </div>
-          <div className="print-rx-brand-text">
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="Hospital Logo"
+              className="print-rx-logo-img"
+              style={{ width: "40px", height: "40px", objectFit: "contain" }}
+            />
+          ) : (
+            <div className="print-rx-logo">
+              <span>+</span>
+            </div>
+          )}
+          <div>
             <h1 className="print-rx-hospital-name">{hospitalName}</h1>
             <p className="print-rx-facility-tag">{rxHeader}</p>
-            <p className="print-rx-facility-info">
-              {fullAddress} • {contactInfo}
-            </p>
+            <p className="print-rx-facility-info">{fullAddress}</p>
+            <p className="print-rx-facility-info">{contactInfo}</p>
           </div>
         </div>
 
+        {/* Prescription Document Badge */}
         <div className="print-rx-meta-box">
           <div className="print-rx-document-title">MEDICAL PRESCRIPTION</div>
           <div className="print-rx-meta-row">
@@ -206,7 +221,7 @@ export default function PrintablePrescription({ prescription, settings: initialS
           <div className="print-rx-info-grid">
             <div className="print-rx-info-row">
               <span className="print-rx-label">Doctor Name:</span>
-              <strong className="print-rx-value print-rx-name">Dr. {doctorName}</strong>
+              <strong className="print-rx-value print-rx-name">{doctorDisplayName}</strong>
             </div>
             <div className="print-rx-info-row">
               <span className="print-rx-label">Specialization:</span>
@@ -307,7 +322,7 @@ export default function PrintablePrescription({ prescription, settings: initialS
         <div className="print-rx-signature-box">
           <div className="print-rx-signature-space" />
           <div className="print-rx-signature-line" />
-          <p className="print-rx-signature-doctor">Dr. {doctorName}</p>
+          <p className="print-rx-signature-doctor">{doctorDisplayName}</p>
           <p className="print-rx-signature-title">{doctorSpecialization}</p>
           <p className="print-rx-signature-reg">License Reg: {doctorCode}</p>
           <p className="print-rx-signature-date">Signed on: {rxDate}</p>

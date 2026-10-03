@@ -254,7 +254,7 @@ async function initDemoData() {
       [2, 'INV-000002', 3, 3, 2, '2026-09-25', '2026-10-25', 650.00, 0.00, 0.00, 650.00, 300.00, 350.00, 'PARTIAL', 'Partial co-pay collected; outstanding balance pending secondary insurance', 1],
       [3, 'INV-000003', 8, 6, null, '2026-09-20', '2026-10-20', 95.00, 0.00, 0.00, 95.00, 95.00, 0.00, 'PAID', 'Front desk outpatient encounter settlement', 1],
       [4, 'INV-000004', 4, 4, null, '2026-09-18', '2026-10-18', 140.00, 0.00, 0.00, 140.00, 0.00, 140.00, 'PENDING', 'Pending self-pay settlement', 1],
-      [5, 'INV-000005', 5, 5, 3, '2026-09-26', '2026-10-26', 820.00, 20.00, 0.00, 800.00, 400.00, 400.00, 'PARTIAL', 'Inpatient deposit received upon admission', 1],
+      [5, 'INV-000005', 5, 5, 3, '2026-09-26', '2026-10-26', 820.00, 0.00, 0.00, 820.00, 400.00, 420.00, 'PARTIAL', 'Inpatient deposit received upon admission', 1],
     ];
     for (const inv of invoices) {
       await client.query(

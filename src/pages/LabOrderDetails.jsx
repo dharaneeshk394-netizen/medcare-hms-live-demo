@@ -11,6 +11,16 @@ import {
   cancelLabOrder,
 } from "../services/labService";
 
+
+function formatDoctorName(name) {
+  if (!name || name === "—") return "Hospital Physician";
+  const trimmed = name.trim();
+  if (/^Dr\.?\s+/i.test(trimmed)) {
+    return trimmed;
+  }
+  return `Dr. ${trimmed}`;
+}
+
 function LabOrderDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -358,7 +368,7 @@ function LabOrderDetails() {
           <div>
             <span style={{ fontSize: "12px", color: "#6b7280", textTransform: "uppercase" }}>Requesting Physician</span>
             <div style={{ fontWeight: 600, fontSize: "15px" }}>
-              {order.doctorName ? `Dr. ${order.doctorName}` : "Hospital Physician"}
+              {order.doctorName ? formatDoctorName(order.doctorName) : "Hospital Physician"}
             </div>
             <div style={{ fontSize: "13px", color: "#6b7280" }}>
               {order.doctorSpecialization || "General Medicine"}

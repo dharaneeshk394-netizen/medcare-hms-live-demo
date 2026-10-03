@@ -322,22 +322,21 @@ export function DonutChart({ title, description, data = [], nameKey = "status", 
     return <ChartEmptyState message={`No recorded entries for ${title?.toLowerCase() || "chart"}.`} />;
   }
 
-  let accumulatedAngle = 0;
-  const slices = data.map((d, idx) => {
+  const slices = data.reduce((acc, d, idx) => {
     const val = Number(d[valueKey]) || 0;
     const percentage = (val / total) * 100;
     const angle = (val / total) * 360;
-    const startAngle = accumulatedAngle;
-    accumulatedAngle += angle;
-    return {
+    const prevEnd = acc.length > 0 ? acc[acc.length - 1].endAngle : 0;
+    acc.push({
       name: d[nameKey],
       val,
       percentage: percentage.toFixed(1),
-      startAngle,
-      endAngle: accumulatedAngle,
+      startAngle: prevEnd,
+      endAngle: prevEnd + angle,
       color: colors[idx % colors.length],
-    };
-  });
+    });
+    return acc;
+  }, []);
 
   return (
     <div style={{ position: "relative", width: "100%" }}>

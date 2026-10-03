@@ -6,6 +6,16 @@ import Icon from "../components/Icon";
 import { getLabOrders, getLabTests, createLabTest } from "../services/labService";
 import { downloadExport } from "../utils/exportUtils";
 
+
+function formatDoctorName(name) {
+  if (!name || name === "—") return "General Physician";
+  const trimmed = name.trim();
+  if (/^Dr\.?\s+/i.test(trimmed)) {
+    return trimmed;
+  }
+  return `Dr. ${trimmed}`;
+}
+
 function Laboratory() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -449,7 +459,7 @@ function Laboratory() {
                           </div>
                         </div>
                       </td>
-                      <td>{o.doctorName ? `Dr. ${o.doctorName}` : "General Physician"}</td>
+                      <td>{o.doctorName ? formatDoctorName(o.doctorName) : "General Physician"}</td>
                       <td>
                         <span
                           style={{

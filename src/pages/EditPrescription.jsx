@@ -30,6 +30,16 @@ function formatDateForInput(dateString) {
  * Loads composite prescription details, enforces backend status lifecycle rules,
  * permits updates to prescription date, clinical notes, status, and line items.
  */
+
+function formatDoctorName(name) {
+  if (!name || name === "—") return "Assigned Physician";
+  const trimmed = name.trim();
+  if (/^Dr\.?\s+/i.test(trimmed)) {
+    return trimmed;
+  }
+  return `Dr. ${trimmed}`;
+}
+
 function EditPrescription() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -623,7 +633,7 @@ function EditPrescription() {
                 id="read-doctor-name"
                 type="text"
                 className="form-control"
-                value={`Dr. ${doctorName} (${doctorSpecialization})`}
+                value={`${formatDoctorName(doctorName)} (${doctorSpecialization})`}
                 readOnly
                 disabled
                 style={{ background: "#f3f4f6", cursor: "not-allowed" }}

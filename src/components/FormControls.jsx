@@ -182,10 +182,11 @@ export function Textarea({
   );
 }
 
-export default {
+const FormControls = {
   FormGroup,
   Input,
   SearchInput,
   Select,
   Textarea,
 };
+export default FormControls;
